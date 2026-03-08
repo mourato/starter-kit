@@ -24,7 +24,7 @@
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/YOUR_USER/starter-kit.git my-project
+git clone https://github.com/mourato/starter-kit.git my-project
 cd my-project
 
 # 2. Run interactive setup
