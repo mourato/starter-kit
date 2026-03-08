@@ -1,8 +1,6 @@
-# ✦ Starter Kit
+# Starter Kit
 
-> A performance-first fullstack TypeScript monorepo boilerplate. Inspired by [T3 Code](https://github.com/pingdotgg/t3code).
-
-## ✨ Features
+## Features
 
 - **React 19** with React Compiler (automatic memoization)
 - **Vite 7** with Rolldown (Rust-powered builds)
@@ -20,7 +18,7 @@
 - **Vitest 4** — HMR-aware testing
 - **Optional Electron** — desktop app support
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone the repo
@@ -39,7 +37,7 @@ make dev
 
 The `setup.sh` script will interactively configure the project based on your needs.
 
-## ⚙ Setup Options
+## Setup Options
 
 The interactive setup asks the following questions and configures the project accordingly:
 
@@ -54,7 +52,7 @@ The interactive setup asks the following questions and configures the project ac
 | **CMS** | None / Payload / Sanity / WP | Adds setup documentation |
 | **Git init** | Yes / No | Initializes repo with first commit |
 
-## 🏗️ Stack
+## Stack
 
 ### Frontend (`apps/web`)
 
@@ -89,7 +87,7 @@ The interactive setup asks the following questions and configures the project ac
 | Vitest 4 | Testing framework |
 | TypeScript 5.7+ strict | Maximum type safety |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── apps/
@@ -116,7 +114,7 @@ The interactive setup asks the following questions and configures the project ac
 └── tsconfig.base.json       # Shared TypeScript config
 ```
 
-## 📜 Commands
+## Commands
 
 | Command | Description |
 |---|---|
@@ -133,7 +131,7 @@ The interactive setup asks the following questions and configures the project ac
 | `make db-migrate` | Run DB migrations |
 | `make clean` | Remove build artifacts |
 
-## 🎨 Design System
+## Design System
 
 The project includes a dark-theme design system with CSS custom properties in `apps/web/src/app.css`:
 
