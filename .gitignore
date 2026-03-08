@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-electron/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+
+# Database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+drizzle/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated
+**/routeTree.gen.ts
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,27 @@
+{
+    "name": "@starter/shared",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        "./formatting": {
+            "types": "./src/formatting.ts",
+            "import": "./src/formatting.ts"
+        },
+        "./constants": {
+            "types": "./src/constants.ts",
+            "import": "./src/constants.ts"
+        }
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run --passWithNoTests"
+    },
+    "dependencies": {
+        "@starter/contracts": "workspace:*"
+    },
+    "devDependencies": {
+        "typescript": "^5.7.3",
+        "vitest": "^4.0.0"
+    }
+}

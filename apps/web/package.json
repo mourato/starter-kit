@@ -1,0 +1,39 @@
+{
+    "name": "@starter/web",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run --passWithNoTests"
+    },
+    "dependencies": {
+        "@starter/contracts": "workspace:*",
+        "@starter/shared": "workspace:*",
+        "@tanstack/react-query": "^5.90.0",
+        "@tanstack/react-router": "^1.160.2",
+        "@tanstack/react-virtual": "^3.13.18",
+        "@trpc/client": "^11.0.0",
+        "@trpc/tanstack-react-query": "^11.0.0",
+        "class-variance-authority": "^0.7.1",
+        "lucide-react": "^0.564.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "zustand": "^5.0.11"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.0.0",
+        "@tanstack/router-plugin": "^1.161.0",
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "@vitejs/plugin-react": "^5.1.4",
+        "babel-plugin-react-compiler": "^19.0.0-beta-e552027-20250112",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5.7.3",
+        "vite": "^7.0.0",
+        "vitest": "^4.0.0"
+    }
+}
