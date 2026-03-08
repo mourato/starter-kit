@@ -15,57 +15,75 @@ WHITE='\033[1;37m'
 CHECK="✓"
 CROSS="✗"
 ARROW="→"
+UI_FD=2
+INPUT_FD=0
 
 # ─── Utilities ───────────────────────────────────────────────────────────────
 sedi() {
   if [[ "$OSTYPE" == darwin* ]]; then sed -i '' "$@"; else sed -i "$@"; fi
 }
 
-print_header() {
-  echo ""
-  echo -e "${MAGENTA}${BOLD}$1${RESET}"
-  echo -e "${DIM}$(printf '─%.0s' $(seq 1 50))${RESET}"
+setup_ui() {
+  if [[ -t 0 && -t 1 && -r /dev/tty && -w /dev/tty ]]; then
+    exec 3<>/dev/tty
+    UI_FD=3
+    INPUT_FD=3
+  fi
 }
 
-print_step()    { echo -e "  ${CYAN}${ARROW}${RESET} $1"; }
-print_success() { echo -e "  ${GREEN}${CHECK}${RESET} $1"; }
-print_warn()    { echo -e "  ${YELLOW}!${RESET} $1"; }
-print_error()   { echo -e "  ${RED}${CROSS}${RESET} $1"; exit 1; }
+ui_print() {
+  printf "%b" "$1" >&${UI_FD}
+}
+
+ui_println() {
+  printf "%b\n" "$1" >&${UI_FD}
+}
+
+print_header() {
+  ui_println ""
+  ui_println "${MAGENTA}${BOLD}$1${RESET}"
+  ui_println "${DIM}$(printf '─%.0s' $(seq 1 50))${RESET}"
+}
+
+print_step()    { ui_println "  ${CYAN}${ARROW}${RESET} $1"; }
+print_success() { ui_println "  ${GREEN}${CHECK}${RESET} $1"; }
+print_warn()    { ui_println "  ${YELLOW}!${RESET} $1"; }
+print_error()   { ui_println "  ${RED}${CROSS}${RESET} $1"; exit 1; }
 
 prompt() {
-  local msg="$1" default="$2" result
+  local msg="$1" default="$2" result=""
   if [[ -n "$default" ]]; then
-    echo -en "  ${WHITE}${msg}${RESET} ${DIM}(${default})${RESET}: "
+    ui_print "  ${WHITE}${msg}${RESET} ${DIM}(${default})${RESET}: "
   else
-    echo -en "  ${WHITE}${msg}${RESET}: "
+    ui_print "  ${WHITE}${msg}${RESET}: "
   fi
-  read -r result
-  echo "${result:-$default}"
+  IFS= read -r -u "$INPUT_FD" result || true
+  printf "%s\n" "${result:-$default}"
 }
 
 prompt_option() {
-  local msg="$1"; shift; local opts=("$@") choice
-  echo -e "\n  ${WHITE}${msg}${RESET}"
+  local msg="$1"; shift; local opts=("$@") choice=""
+  ui_println "\n  ${WHITE}${msg}${RESET}"
   for i in "${!opts[@]}"; do
-    echo -e "    ${CYAN}$((i + 1)))${RESET} ${opts[$i]}"
+    ui_println "    ${CYAN}$((i + 1)))${RESET} ${opts[$i]}"
   done
-  echo -en "  ${DIM}Choose [1-${#opts[@]}]${RESET}: "
-  read -r choice
+  ui_print "  ${DIM}Choose [1-${#opts[@]}]${RESET}: "
+  IFS= read -r -u "$INPUT_FD" choice || true
   if [[ -z "$choice" ]] || ! [[ "$choice" =~ ^[0-9]+$ ]] || [[ "$choice" -lt 1 || "$choice" -gt "${#opts[@]}" ]]; then
-    echo "1"
+    printf "1\n"
   else
-    echo "$choice"
+    printf "%s\n" "$choice"
   fi
 }
 
 prompt_yn() {
-  local msg="$1" default="${2:-y}" result
+  local msg="$1" default="${2:-y}" result=""
   if [[ "$default" == "y" ]]; then
-    echo -en "  ${WHITE}${msg}${RESET} ${DIM}[Y/n]${RESET}: "
+    ui_print "  ${WHITE}${msg}${RESET} ${DIM}[Y/n]${RESET}: "
   else
-    echo -en "  ${WHITE}${msg}${RESET} ${DIM}[y/N]${RESET}: "
+    ui_print "  ${WHITE}${msg}${RESET} ${DIM}[y/N]${RESET}: "
   fi
-  read -r result
+  IFS= read -r -u "$INPUT_FD" result || true
   result="${result:-$default}"
   result=$(echo "$result" | tr 'A-Z' 'a-z')
   [[ "$result" == "y" || "$result" == "yes" ]]
@@ -352,6 +370,12 @@ EOF
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 main() {
+  setup_ui
+
+  if [[ ! -t 0 || ! -t 1 ]]; then
+    print_error "Interactive setup requires a terminal (TTY). Run it from an interactive shell."
+  fi
+
   # Prerequisites
   if [[ ! -f "package.json" ]] || ! grep -q '@starter/monorepo' package.json 2>/dev/null; then
     print_error "Run this script from the starter-kit root directory."
@@ -360,14 +384,16 @@ main() {
     print_error "Bun is required. Install: https://bun.sh"
   fi
 
-  clear
-  echo ""
-  echo -e "${MAGENTA}${BOLD}  ╔═══════════════════════════════════════════╗${RESET}"
-  echo -e "${MAGENTA}${BOLD}  ║        ✦  Starter Kit Setup  ✦           ║${RESET}"
-  echo -e "${MAGENTA}${BOLD}  ╚═══════════════════════════════════════════╝${RESET}"
-  echo ""
-  echo -e "  ${DIM}Configure your project interactively.${RESET}"
-  echo -e "  ${DIM}Press Enter to accept defaults.${RESET}"
+  if [[ -t "$UI_FD" ]]; then
+    clear >&${UI_FD} || true
+  fi
+  ui_println ""
+  ui_println "${MAGENTA}${BOLD}  ╔═══════════════════════════════════════════╗${RESET}"
+  ui_println "${MAGENTA}${BOLD}  ║        ✦  Starter Kit Setup  ✦           ║${RESET}"
+  ui_println "${MAGENTA}${BOLD}  ╚═══════════════════════════════════════════╝${RESET}"
+  ui_println ""
+  ui_println "  ${DIM}Configure your project interactively.${RESET}"
+  ui_println "  ${DIM}Press Enter to accept defaults.${RESET}"
 
   # ── Questions ────────────────────────────────────────────────────────────
   print_header "⚙ Project Identity"
@@ -405,19 +431,19 @@ main() {
 
   # ── Summary ──────────────────────────────────────────────────────────────
   print_header "📋 Summary"
-  echo -e "  ${BOLD}Project:${RESET}   ${PROJECT_NAME} (${PACKAGE_SCOPE})"
-  echo -e "  ${BOLD}Platform:${RESET}  ${PLATFORM}"
-  echo -e "  ${BOLD}Backend:${RESET}   $([[ "$INCLUDE_BACKEND" == true ]] && echo "Hono + tRPC" || echo "None")"
-  echo -e "  ${BOLD}Database:${RESET}  ${DATABASE}"
-  echo -e "  ${BOLD}Auth:${RESET}      $([[ "$INCLUDE_AUTH" == true ]] && echo "Better Auth" || echo "None")"
-  echo -e "  ${BOLD}CMS:${RESET}       ${CMS}"
-  echo ""
+  ui_println "  ${BOLD}Project:${RESET}   ${PROJECT_NAME} (${PACKAGE_SCOPE})"
+  ui_println "  ${BOLD}Platform:${RESET}  ${PLATFORM}"
+  ui_println "  ${BOLD}Backend:${RESET}   $([[ "$INCLUDE_BACKEND" == true ]] && echo "Hono + tRPC" || echo "None")"
+  ui_println "  ${BOLD}Database:${RESET}  ${DATABASE}"
+  ui_println "  ${BOLD}Auth:${RESET}      $([[ "$INCLUDE_AUTH" == true ]] && echo "Better Auth" || echo "None")"
+  ui_println "  ${BOLD}CMS:${RESET}       ${CMS}"
+  ui_println ""
   if ! prompt_yn "Proceed?"; then
     print_warn "Cancelled."; exit 0
   fi
 
   # ── Execute ──────────────────────────────────────────────────────────────
-  echo ""
+  ui_println ""
   print_header "🔨 Configuring"
 
   # 1. Rename scope
@@ -492,22 +518,22 @@ main() {
   fi
 
   # ── Done ─────────────────────────────────────────────────────────────────
-  echo ""
-  echo -e "${GREEN}${BOLD}  ╔═══════════════════════════════════════════╗${RESET}"
-  echo -e "${GREEN}${BOLD}  ║          ${CHECK} Setup Complete!               ║${RESET}"
-  echo -e "${GREEN}${BOLD}  ╚═══════════════════════════════════════════╝${RESET}"
-  echo ""
-  echo -e "  ${BOLD}Next steps:${RESET}"
-  echo -e "    ${CYAN}1.${RESET} bun install"
+  ui_println ""
+  ui_println "${GREEN}${BOLD}  ╔═══════════════════════════════════════════╗${RESET}"
+  ui_println "${GREEN}${BOLD}  ║          ${CHECK} Setup Complete!               ║${RESET}"
+  ui_println "${GREEN}${BOLD}  ╚═══════════════════════════════════════════╝${RESET}"
+  ui_println ""
+  ui_println "  ${BOLD}Next steps:${RESET}"
+  ui_println "    ${CYAN}1.${RESET} bun install"
   if [[ "$INCLUDE_BACKEND" == true && "$DATABASE" != "none" ]]; then
-    echo -e "    ${CYAN}2.${RESET} make db-migrate"
-    echo -e "    ${CYAN}3.${RESET} make dev"
+    ui_println "    ${CYAN}2.${RESET} make db-migrate"
+    ui_println "    ${CYAN}3.${RESET} make dev"
   else
-    echo -e "    ${CYAN}2.${RESET} make dev"
+    ui_println "    ${CYAN}2.${RESET} make dev"
   fi
-  echo ""
-  echo -e "  ${DIM}Happy coding! 🚀${RESET}"
-  echo ""
+  ui_println ""
+  ui_println "  ${DIM}Happy coding! 🚀${RESET}"
+  ui_println ""
 }
 
 main "$@"
