@@ -9,13 +9,15 @@
 
 This is a fullstack TypeScript monorepo starter with React, Hono, tRPC, and optional Electron support.
 
-## Core Priorities
+## Core Values & Precedence
 
-1. Performance first.
-2. Reliability first.
-3. Keep behavior predictable under load and during failures.
+1. **Performance** and **Reliability** first.
+2. Keep **behavior predictable** under load and during failures.
+3. **Safety** — memory safety, data integrity, security first
+4. **Completeness** — feature-complete, no silent failures
+5. **Helpfulness** — clear guidance, actionable advice
 
-If a tradeoff is required, choose correctness and robustness over short-term convenience.
+If a tradeoff is required, choose **correctness and robustness** over short-term convenience.
 
 ## Maintainability
 
