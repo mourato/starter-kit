@@ -87,7 +87,7 @@ Before calling work done, walk this list and say which entries applied:
 
 ## Working here
 
-Run commands through the `Makefile`, which wraps the `bun run` scripts. Start
+The `Makefile` wraps the `bun run` scripts. Start
 both apps with `make dev`, or one with `make dev-web` or `make dev-server`.
 Vite uses `strictPort`, so it fails if port 5173 is busy. Create tables with
 `make db-migrate`.
