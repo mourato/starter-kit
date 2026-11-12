@@ -19,7 +19,7 @@
         "@trpc/client": "^11.0.0",
         "@trpc/tanstack-react-query": "^11.0.0",
         "class-variance-authority": "^0.7.1",
-        "lucide-react": "^0.564.0",
+        "lucide-react": "^1.70.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "zustand": "^5.0.11"
@@ -29,11 +29,11 @@
         "@tanstack/router-plugin": "^1.161.0",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
-        "@vitejs/plugin-react": "^5.1.4",
+        "@vitejs/plugin-react": "^6.3.0",
         "babel-plugin-react-compiler": "^19.0.0-beta-e552027-20250112",
         "tailwindcss": "^4.0.0",
-        "typescript": "^5.7.3",
-        "vite": "^7.0.0",
-        "vitest": "^4.0.0"
+        "typescript": "^7.0.2",
+        "vite": "^8.3.7",
+        "vitest": "^5.1.0"
     }
 }
